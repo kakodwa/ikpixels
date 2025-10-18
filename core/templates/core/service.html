@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+
+{% block content %}
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    We provide comprehensive digital solutions to help your business thrive in the modern world
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <!-- Web Development Service -->
+                <div class="card-hover bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Web Development</h3>
+                    <p class="text-gray-700 mb-6">
+                        Custom web applications, responsive websites, and e-commerce solutions built with modern technologies and best practices.
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                            React, Vue.js & Angular Applications
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                            E-commerce & CMS Development
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                            API Integration & Backend Services
+                        </li>
+                    </ul>
+                    <button onclick="openServiceModal('web-dev')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        Learn More
+                    </button>
+                </div>
+
+                <!-- App Development Service -->
+                <div class="card-hover bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">App Development</h3>
+                    <p class="text-gray-700 mb-6">
+                        Native and cross-platform mobile applications for iOS and Android with seamless user experiences and robust functionality.
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
+                            iOS & Android Native Apps
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
+                            React Native & Flutter
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
+                            App Store Deployment
+                        </li>
+                    </ul>
+                    <button onclick="openServiceModal('app-dev')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                        Learn More
+                    </button>
+                </div>
+
+                <!-- Graphic Design Service -->
+                <div class="card-hover bg-gradient-to-br from-purple-50 to-pink-100 p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Graphic Design</h3>
+                    <p class="text-gray-700 mb-6">
+                        Creative visual solutions including branding, UI/UX design, and marketing materials that make your brand stand out.
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-purple-600 rounded-full mr-3"></span>
+                            Logo & Brand Identity Design
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-purple-600 rounded-full mr-3"></span>
+                            UI/UX Design & Prototyping
+                        </li>
+                        <li class="flex items-center text-gray-700">
+                            <span class="w-2 h-2 bg-purple-600 rounded-full mr-3"></span>
+                            Marketing Materials & Print Design
+                        </li>
+                    </ul>
+                    <button onclick="openServiceModal('graphic-design')" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

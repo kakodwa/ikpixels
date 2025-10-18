@@ -1,0 +1,324 @@
+{% extends 'core/base.html' %}
+
+
+{% block content %}
+        
+        <!-- Admin Dashboard Page -->
+        <div id="admin-page" class="page-content">
+            <!-- Admin Header -->
+            <section class="bg-gradient-to-r from-indigo-600 to-purple-600 pt-20 pb-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+                    <div class="text-center">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                            Admin Dashboard
+                        </h1>
+                        <p class="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
+                            Manage your earnings, track transactions, and monitor business performance
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Content -->
+            <section class="py-16 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Navigation Tabs -->
+                    <div class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden">
+                        <div class="border-b border-gray-200">
+                            <nav class="flex space-x-8 px-8" aria-label="Tabs">
+                                <button onclick="switchAdminTab('overview')" class="admin-tab active border-b-2 border-indigo-500 py-4 px-1 text-sm font-medium text-indigo-600">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                        Dashboard Overview
+                                    </div>
+                                </button>
+                                <button onclick="switchAdminTab('clients')" class="admin-tab border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                        </svg>
+                                        Client Management
+                                    </div>
+                                </button>
+                                <button onclick="switchAdminTab('transactions')" class="admin-tab border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Transactions
+                                    </div>
+                                </button>
+                                <button onclick="switchAdminTab('links')" class="admin-tab border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                        </svg>
+                                        Useful Links
+                                    </div>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content Container -->
+                    <div id="admin-tab-content">
+                        <!-- Overview Tab -->
+                        <div id="overview-tab" class="admin-tab-content">
+                            <!-- Income Overview Cards -->
+                            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                        <!-- Total Income -->
+                        <div class="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-green-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Total Income</p>
+                                    <p class="text-3xl font-bold text-gray-900 mt-2" id="total-income">$12,450.00</p>
+                                    <p class="text-green-600 text-sm mt-1">
+                                        <span class="inline-flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                            +15.3% from last month
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Available Balance -->
+                        <div class="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Available Balance</p>
+                                    <p class="text-3xl font-bold text-gray-900 mt-2" id="available-balance">$8,750.00</p>
+                                    <p class="text-blue-600 text-sm mt-1">Ready for withdrawal</p>
+                                </div>
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Withdrawals -->
+                        <div class="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-orange-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Pending Withdrawals</p>
+                                    <p class="text-3xl font-bold text-gray-900 mt-2" id="pending-withdrawals">$3,700.00</p>
+                                    <p class="text-orange-600 text-sm mt-1">2 requests processing</p>
+                                </div>
+                                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-2xl p-8 shadow-lg mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+                            <button onclick="openWithdrawModal()" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="text-xl font-bold mb-2">Withdraw Funds</h3>
+                                        <p class="text-green-100">Transfer available balance to your account</p>
+                                    </div>
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                </div>
+                            </button>
+
+                            <button onclick="openPostItemModal()" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="text-xl font-bold mb-2">Post New Item</h3>
+                                        <p class="text-blue-100">Add product to marketplace</p>
+                                    </div>
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                            </button>
+
+                            <button onclick="openAddClientModal()" class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6 rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="text-xl font-bold mb-2">Add Client</h3>
+                                        <p class="text-indigo-100">Manage client relationships</p>
+                                    </div>
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+
+                            <button onclick="openAddUrlModal()" class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl hover:from-orange-700 hover:to-orange-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="text-xl font-bold mb-2">Add Useful Link</h3>
+                                        <p class="text-orange-100">Save important web resources</p>
+                                    </div>
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </div>
+                            </button>
+
+                            <button onclick="generateReport()" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="text-xl font-bold mb-2">Generate Report</h3>
+                                        <p class="text-purple-100">Download detailed financial report</p>
+                                    </div>
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                        </div>
+
+                        <!-- Clients Tab -->
+                        <div id="clients-tab" class="admin-tab-content hidden">
+                            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                                <div class="p-8 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-bold text-gray-900">Client Management</h2>
+                                        <div class="flex gap-2">
+                                            <button onclick="filterClients('all')" class="client-filter active bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition-colors">All</button>
+                                            <button onclick="filterClients('active')" class="client-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Active</button>
+                                            <button onclick="filterClients('completed')" class="client-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Completed</button>
+                                            <button onclick="filterClients('pending')" class="client-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Pending</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-8">
+                                    <div class="mb-6">
+                                        <button onclick="openAddClientModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
+                                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            Add New Client
+                                        </button>
+                                    </div>
+                                    <div id="clients-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        <!-- Clients will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transactions Tab -->
+                        <div id="transactions-tab" class="admin-tab-content hidden">
+                            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                                <div class="p-8 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-bold text-gray-900">Transaction Summary</h2>
+                                        <div class="flex gap-2">
+                                            <button onclick="filterTransactions('all')" class="transaction-filter active bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition-colors">All</button>
+                                            <button onclick="filterTransactions('income')" class="transaction-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Income</button>
+                                            <button onclick="filterTransactions('withdrawal')" class="transaction-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Withdrawals</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-8 mb-6">
+                                    <div class="flex gap-4">
+                                        <button onclick="openWithdrawModal()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                            </svg>
+                                            Withdraw Funds
+                                        </button>
+                                        <button onclick="generateReport()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            Generate Report
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transactions-table" class="bg-white divide-y divide-gray-200">
+                                            <!-- Transactions will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm text-gray-700">Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">47</span> transactions</p>
+                                        <div class="flex gap-2">
+                                            <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>Previous</button>
+                                            <button class="px-3 py-2 text-sm bg-purple-600 text-white rounded hover:bg-purple-700">1</button>
+                                            <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">2</button>
+                                            <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">3</button>
+                                            <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Links Tab -->
+                        <div id="links-tab" class="admin-tab-content hidden">
+                            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                                <div class="p-8 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-bold text-gray-900">Useful Web Links</h2>
+                                        <div class="flex gap-2">
+                                            <button onclick="filterLinks('all')" class="link-filter active bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700 transition-colors">All</button>
+                                            <button onclick="filterLinks('development')" class="link-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Development</button>
+                                            <button onclick="filterLinks('design')" class="link-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Tools</button>
+                                            <button onclick="filterLinks('learning')" class="link-filter bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">Learning</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-8">
+                                    <div class="mb-6">
+                                        <button onclick="openAddUrlModal()" class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-semibold">
+                                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            Add New Link
+                                        </button>
+                                    </div>
+                                    <div id="useful-links-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        <!-- Links will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- End Admin Dashboard Page -->
+{% endblock %}

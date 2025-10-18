@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+
+
+{% block content %}
+        
+    <!-- Gallery Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Creative Gallery</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Explore our portfolio of stunning graphic designs, logos, and visual creations
+                </p>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for item in gallery_items %}
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="aspect-square bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex items-center justify-center">
+                        {% if item.media_type == 'image' %}
+                            <img src="{{ item.media.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <svg class="w-24 h-24 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            {% endif %}
+                    </div>
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <div class="text-white text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <h3 class="text-lg font-bold mb-1">{{item.title}}</h3>
+                            <p class="text-sm">{{item.description}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+           
+            </div>
+
+            <!-- Gallery Stats -->
+            <div class="mt-16 grid md:grid-cols-4 gap-8 text-center">
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl">
+                    <div class="text-3xl font-bold text-purple-600 mb-2">150+</div>
+                    <div class="text-gray-700">Designs Created</div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">50+</div>
+                    <div class="text-gray-700">Brands Designed</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl">
+                    <div class="text-3xl font-bold text-green-600 mb-2">98%</div>
+                    <div class="text-gray-700">Client Satisfaction</div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-xl">
+                    <div class="text-3xl font-bold text-orange-600 mb-2">24h</div>
+                    <div class="text-gray-700">Average Turnaround</div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

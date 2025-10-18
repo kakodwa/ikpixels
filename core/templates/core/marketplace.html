@@ -1,0 +1,198 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<!-- Marketplace Page -->
+<div id="marketplace-page" class="page-content">
+    <!-- Marketplace Header -->
+    <section class="bg-gradient-to-r from-purple-600 to-blue-600 pt-20 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                    Digital Marketplace
+                </h1>
+                <p class="text-xl text-purple-100 mb-8 max-w-3xl mx-auto">
+                    Discover premium codes, applications, and websites. Everything you need to accelerate your projects.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+                    <input type="text" id="search-input" placeholder="Search products..." class="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white">
+                    <button id="search-btn" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="bg-white py-8 border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button onclick="setCategory('all')" class="filter-btn active bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-colors">
+                    All Products
+                </button>
+                <button onclick="setCategory('code')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    Source Code
+                </button>
+                <button onclick="setCategory('apps')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    Mobile Apps
+                </button>
+                <button onclick="setCategory('websites')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    Websites
+                </button>
+                <button onclick="setCategory('templates')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    Templates
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="products-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for product in products %}
+                 <a href="{% url 'product_detail' product.id %}" class="block bg-white rounded-lg shadow hover:shadow-lg transition">
+                    <div class="h-48 bg-gray-200 rounded-t-lg overflow-hidden">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-gray-900 text-lg">{{ product.title }}</h3>
+                            <span class="text-green-600 font-bold text-xl">MKW{{ product.price }}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ product.description }}</p>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= product.views %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <span class="text-gray-500 text-sm ml-2">({{ product.views }})</span>
+                            </div>
+                            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full capitalize">{{ product.category }}</span>
+                        </div>
+
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                                Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center py-8 hidden">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- JS -->
+<script>
+    let currentPage = 1;
+    let hasNext = true;
+    let currentCategory = 'all';
+    let currentSearch = '';
+
+    async function loadProducts(reset = false) {
+        if (!hasNext && !reset) return;
+
+        const grid = document.getElementById('products-grid');
+        const spinner = document.getElementById('loading-spinner');
+        spinner.classList.remove('hidden');
+
+        if (reset) {
+            currentPage = 1;
+            hasNext = true;
+            grid.innerHTML = '';
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', currentPage);
+        url.searchParams.set('category', currentCategory);
+        url.searchParams.set('search', currentSearch);
+
+        const response = await fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        const data = await response.json();
+
+        spinner.classList.add('hidden');
+
+        data.products.forEach(product => {
+            grid.insertAdjacentHTML('beforeend', `
+                <a href="/product/${product.id}/" class="block bg-white rounded-lg shadow hover:shadow-lg transition">
+                    <div class="h-48 bg-gray-200 rounded-t-lg overflow-hidden">
+                        ${product.image
+                            ? `<img src="${product.image}" alt="${product.title}" class="w-full h-full object-cover">`
+                            : `<div class='w-full h-full flex items-center justify-center text-gray-400'>No Image</div>`}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-gray-900 text-lg">${product.title}</h3>
+                            <span class="text-green-600 font-bold text-xl">MKW${product.price}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.description}</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-yellow-400">★</div>
+                            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full capitalize">${product.category}</span>
+                        </div>
+                        <button class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                            Add to Cart
+                        </button>
+                    </div>
+                </a>
+            `);
+        });
+
+        hasNext = data.has_next;
+        if (hasNext) currentPage++;
+    }
+
+    function setCategory(category) {
+        currentCategory = category;
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-purple-600', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        const activeBtn = Array.from(document.querySelectorAll('.filter-btn'))
+            .find(btn => btn.textContent.trim().toLowerCase().includes(category));
+        if (activeBtn) {
+            activeBtn.classList.add('bg-purple-600', 'text-white');
+            activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        }
+        loadProducts(true);
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+        currentSearch = document.getElementById('search-input').value.trim();
+        loadProducts(true);
+    });
+
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+            loadProducts();
+        }
+    });
+
+    // Initial load
+    loadProducts(true);
+</script>
+
+{% endblock %}
