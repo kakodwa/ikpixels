@@ -1,1 +1,1 @@
-web: gunicorn ikpixels.wsgi --log-file -
+gunicorn ikpixels.wsgi --log-file -
