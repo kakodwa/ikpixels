@@ -5,10 +5,20 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.db import transaction
+
+from .paychangu import (
+    mobile_initialize_payment,
+    card_initialize_payment,
+    verify_paychangu_payment,
+)
+import uuid
 
 from .models import (
     Client, ContactMessage, WithdrawalRequest,
-    ExternalLink, Product, Order, OrderItem, PaymentAttempt,Gallery
+    ExternalLink, Product, Order, OrderItem, PaymentAttempt,Gallery,Client
 )
 
 
@@ -82,7 +92,7 @@ def admin_dashboard(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect(reverse("/"))
+    return redirect('index')
 
 
 def index(request):
@@ -105,7 +115,7 @@ def gallery(request):
 	context['gallery_items'] = Gallery.objects.all().order_by('-uploaded_at')[:12]
 	return render(request,'core/gallery.html',context)
 
-
+@login_required
 def product_create(request):
     if request.method == 'POST':
         # Get data from form
@@ -145,8 +155,6 @@ def product_create(request):
         return redirect('product_detail', pk=product.pk)
 
     return render(request, 'products/product_form.html')
-
-
 
 
 def marketplace(request):
@@ -204,3 +212,189 @@ def product_detail(request, pk):
         'product': product,
         'technologies': technologies,
     })
+
+
+# ----------------------------------------------------------
+# 🟢 CREATE OR GET USER ORDER
+# ----------------------------------------------------------
+@login_required
+def get_or_create_order(client):
+    """Helper to get or create a pending order for client."""
+    order, created = Order.objects.get_or_create(client=client, paid=False)
+    return order
+
+
+# ----------------------------------------------------------
+# 💰 MOBILE MONEY PAYMENT
+# ----------------------------------------------------------
+@csrf_exempt
+@login_required
+def mobile_money_payment(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    try:
+        client = Client.objects.get(user=request.user)
+    except Client.DoesNotExist:
+        return JsonResponse({"status": "failed", "message": "No client record found."}, status=400)
+
+    if request.method == "POST":
+        phone = request.POST.get("phone-number")
+        provider = request.POST.get("provider") or request.POST.get("operator")
+        email = request.user.email or "ikpixels.py@gmail.com"
+
+        if not phone or not provider:
+            return JsonResponse({"status": "failed", "message": "Missing phone or provider"}, status=400)
+
+        # Create order if not exists
+        order = get_or_create_order(client)
+        order_item, _ = OrderItem.objects.get_or_create(
+            order=order, product=product, defaults={"price": product.price, "qty": 1}
+        )
+
+        # Initialize payment with PayChangu
+        result = mobile_initialize_payment(
+            mobile=phone,
+            operator=provider,
+            amount=float(product.price),
+            email=email,
+        )
+
+        print(result)
+
+        if result.get("init_status") != "success":
+            return JsonResponse({
+                "status": "failed",
+                "message": result.get("init_message", "Payment init failed."),
+            }, status=400)
+
+        tx_ref = result["charge_id"]
+
+        # Record attempt
+        PaymentAttempt.objects.create(
+            order=order,
+            tx_ref=tx_ref,
+            payment_type="airtel" if "airtel" in provider.lower() else "mpamba",
+            amount=product.price,
+            email=email,
+            metadata={"mobile": phone, "operator": provider},
+            status="pending",
+            raw_response=result,
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "tx_ref": tx_ref,
+            "message": result.get("message", "Awaiting mobile confirmation."),
+        })
+
+    # Always return JSON, even for GET requests
+    return JsonResponse({
+        "status": "failed",
+        "message": "Invalid request method, POST required."
+    }, status=400)
+
+# ----------------------------------------------------------
+# 💳 CARD (VISA/MASTERCARD) PAYMENT
+# ----------------------------------------------------------
+@csrf_exempt
+@login_required
+def card_payment(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    client = get_object_or_404(Client, user=request.user)
+
+    if request.method == "POST":
+        card_number = request.POST.get("card-number")
+        expiry = request.POST.get("expiry")
+        cvv = request.POST.get("cvv")
+        cardholder_name = request.POST.get("cardholder-name")
+        email = request.user.email or "guest@ikpixels.com"
+
+        if not all([card_number, expiry, cvv, cardholder_name]):
+            return JsonResponse({"error": "All fields are required"}, status=400)
+
+        order = get_or_create_order(client)
+        OrderItem.objects.get_or_create(
+            order=order, product=product, defaults={"price": product.price, "qty": 1}
+        )
+
+        redirect_url = request.build_absolute_uri("/pay/verify/")
+
+        result = card_initialize_payment(
+            card_number=card_number,
+            expiry=expiry,
+            cvv=cvv,
+            cardholder_name=cardholder_name,
+            amount=float(product.price),
+            currency="MWK",
+            email=email,
+            redirect_url=redirect_url,
+        )
+
+        if result.get("init_status") != "success":
+            return JsonResponse(
+                {
+                    "status": "failed",
+                    "message": result.get("init_message", "Card payment failed."),
+                },
+                status=400,
+            )
+
+        tx_ref = result["charge_id"]
+
+        PaymentAttempt.objects.create(
+            order=order,
+            tx_ref=tx_ref,
+            payment_type="visa",
+            amount=product.price,
+            email=email,
+            metadata={"cardholder": cardholder_name},
+            status="pending",
+            raw_response=result,
+        )
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "tx_ref": tx_ref,
+                "redirect_url": redirect_url,
+                "message": result.get("message", "Card payment initialized."),
+            }
+        )
+
+    return render(request, "payments/visa_payment_form.html", {"product": product})
+
+
+# ----------------------------------------------------------
+# 🔍 VERIFY PAYMENT
+# ----------------------------------------------------------
+@login_required
+@csrf_exempt
+def verify_payment(request, tx_ref):
+    payment_type = request.POST.get("type", "card")
+
+    if not tx_ref:
+        return JsonResponse({"error": "Missing tx_ref"}, status=400)
+
+    attempt = PaymentAttempt.objects.filter(tx_ref=tx_ref).first()
+    if not attempt:
+        return JsonResponse({"error": "Payment attempt not found"}, status=404)
+
+    result = verify_paychangu_payment(tx_ref, payment_type=payment_type)
+    status = result.get("status")
+
+    attempt.raw_response = result
+    attempt.status = "success" if status == "success" else "failed"
+    attempt.save()
+
+    if status == "success":
+        order = attempt.order
+        order.paid = True
+        order.total = attempt.amount
+        order.save()
+
+        for item in order.items.all():
+            item.product.mark_sold(1)
+
+        return JsonResponse({"status": "success", "message": "Payment verified."})
+    else:
+        return JsonResponse({"status": "failed", "message": "Verification failed."})

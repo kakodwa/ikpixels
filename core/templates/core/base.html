@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IKpixels Invt - Web Development, Design & Digital Marketplace</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Make sure jQuery is loaded -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
     <style>
         body {
             box-sizing: border-box;
@@ -49,32 +54,30 @@
                     <a href="{% url 'gallery' %}" oclass="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Gallery</a>
                     <a href="{% url 'marketplace' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Marketplace</a>
                     <a href="{% url 'contact' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Contact Us</a>
-
-                    <a href="{% url 'admin_dashboard' %}"  class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</a>
                     
                     <!-- Shopping Cart -->
                     <button onclick="toggleCart()" class="relative text-gray-700 hover:text-purple-600 p-2 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5.4M7 13v8a2 2 0 002 2h6a2 2 0 002-2v-8m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v4.1"></path>
-                        </svg>
+                         <i class="fa-solid fa-cart-shopping text-xl"></i>
                         <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                     </button>
                     
                     <!-- User Menu -->
                     <div id="user-menu" class="relative">
+
+                        {% if not user.is_authenticated %}
                         <!-- Logged Out State -->
                         <div id="auth-buttons" class="flex items-center space-x-3">
                             <button onclick="showLoginModal()" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Login</button>
                             <button onclick="showRegisterModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">Sign Up</button>
                         </div>
-                        
+                        {% else %}
                         <!-- Logged In State -->
-                        <div id="user-dropdown" class="hidden">
+                        <div id="user-dropdown" class="">
                             <button onclick="toggleUserMenu()" class="flex items-center text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-2">
-                                    <span id="user-initials" class="text-purple-600 font-semibold text-sm">JD</span>
+                                    <i class="fa-solid fa-user"></i>
                                 </div>
-                                <span id="user-name">John Doe</span>
+                                <span id="user-name">{{request.user}}</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
@@ -82,13 +85,14 @@
                             
                             <!-- Dropdown Menu -->
                             <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="#" onclick="showPage('customer-dashboard')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                <a href="{% url 'admin_dashboard' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
                                 <a href="#" onclick="showPage('customer-dashboard'); switchCustomerTab('orders')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
                                 <a href="#" onclick="showPage('customer-dashboard'); switchCustomerTab('profile')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                                 <div class="border-t border-gray-100"></div>
-                                <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="md:hidden flex items-center">
@@ -107,22 +111,23 @@
                 <a href="{% url 'about' %}" class="block px-3 py-2 text-gray-700 hover:text-purple-600">About</a>
                 <a href="{% url 'services' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Services</a>
                 <a href="{% url 'marketplace' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Marketplace</a>
-                <a href="{% url 'gallery' %}" oclass="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Gallery</a>
-                <a href="{% url 'admin_dashboard' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Admin</a>
+                <a href="{% url 'gallery' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Gallery</a>
                 <a href="{% url 'contact' %}"  class="block px-3 py-2 text-gray-700 hover:text-purple-600">Contact Us</a>
                 
                 <!-- Mobile Auth Buttons -->
+                {% if not user.is_authenticated %}
                 <div id="mobile-auth-buttons" class="border-t pt-3 mt-3">
                     <button onclick="showLoginModal()" class="block w-full text-left px-3 py-2 text-gray-700 hover:text-purple-600">Login</button>
                     <button onclick="showRegisterModal()" class="block w-full text-left px-3 py-2 text-gray-700 hover:text-purple-600">Sign Up</button>
                 </div>
-                
+                {% else %}
                 <!-- Mobile User Menu -->
-                <div id="mobile-user-menu" class="hidden border-t pt-3 mt-3">
-                    <a href="#" onclick="showPage('customer-dashboard')" class="block px-3 py-2 text-gray-700 hover:text-purple-600">Dashboard</a>
+                <div id="mobile-user-menu" class="border-t pt-3 mt-3">
+                    <a href="{% url 'admin_dashboard' %}" class="block px-3 py-2 text-gray-700 hover:text-purple-600">Dashboard</a>
                     <a href="#" onclick="toggleCart()" class="block px-3 py-2 text-gray-700 hover:text-purple-600">Shopping Cart</a>
-                    <a href="#" onclick="logout()" class="block px-3 py-2 text-gray-700 hover:text-purple-600">Sign Out</a>
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 text-gray-700 hover:text-purple-600">Sign Out</a>
                 </div>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -776,65 +781,94 @@ function proceedWithPayment(product) {
             });
         }
 
-        // Show mobile money payment form
-        function showMobileMoneyForm(product, provider, color) {
-            const title = document.getElementById('modal-title');
-            const content = document.getElementById('modal-content');
+function showMobileMoneyForm(product, provider, color) {
+    const title = document.getElementById('modal-title');
+    const content = document.getElementById('modal-content');
 
-            title.textContent = `${provider} Payment`;
-            content.innerHTML = `
-                <form id="mobile-money-form" class="space-y-6">
-                    <div class="text-center mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">${product.title}</h3>
-                        <p class="text-2xl font-bold text-green-600">MKW ${product.price}</p>
-                    </div>
-                    
-                    <div>
-                        <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-3 text-gray-500">+265</span>
-                            <input type="tel" id="phone-number" placeholder="881234567" class="w-full pl-16 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${color}-500 focus:border-transparent" required>
-                        </div>
-                        <p class="text-gray-500 text-sm mt-1">Enter your ${provider} registered number</p>
-                    </div>
-                    
-                    <div class="bg-${color}-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-${color}-900 mb-2">Payment Instructions:</h4>
-                        <ol class="text-${color}-800 text-sm space-y-1">
-                            <li>1. You will receive an SMS prompt on your phone</li>
-                            <li>2. Enter your ${provider} PIN to confirm payment</li>
-                            <li>3. You'll receive a confirmation SMS</li>
-                            <li>4. Your download will be available immediately</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="flex gap-3">
-                        <button type="button" onclick="purchaseProduct(${product.id})" class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors">
-                            Back
-                        </button>
-                        <button type="submit" class="flex-1 bg-${color}-600 text-white py-3 rounded-lg hover:bg-${color}-700 transition-colors">
-                            Send Payment Request
-                        </button>
-                    </div>
-                </form>
-            `;
+    title.textContent = `${provider} Payment`;
 
-            // Handle form submission
-            document.getElementById('mobile-money-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const phoneNumber = document.getElementById('phone-number').value;
-                if (phoneNumber.length < 9) {
-                    alert('Please enter a valid phone number');
-                    return;
-                }
-                processMobileMoneyPayment(product, provider, phoneNumber);
-            });
+    // Build form HTML
+    content.innerHTML = `
+        <form id="mobile-money-form" class="space-y-6">
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">${product.title}</h3>
+                <p class="text-2xl font-bold text-green-600">MKW ${product.price}</p>
+            </div>
+            
+            <div>
+                <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">+265</span>
+                    <input name="phone-number" type="tel" id="phone-number" placeholder="881234567" class="w-full pl-16 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${color}-500 focus:border-transparent" required>
+                </div>
+                <p class="text-gray-500 text-sm mt-1">Enter your ${provider} registered number</p>
+                <input name="provider" type="hidden" value="${provider}">
+            </div>
+            
+            <div class="bg-${color}-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-${color}-900 mb-2">Payment Instructions:</h4>
+                <ol class="text-${color}-800 text-sm space-y-1">
+                    <li>1. You will receive an SMS prompt on your phone</li>
+                    <li>2. Enter your ${provider} PIN to confirm payment</li>
+                    <li>3. You'll receive a confirmation SMS</li>
+                    <li>4. Your download will be available immediately</li>
+                </ol>
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="purchaseProduct(${product.id})" class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    Back
+                </button>
+                <button type="submit" class="flex-1 bg-${color}-600 text-white py-3 rounded-lg hover:bg-${color}-700 transition-colors">
+                    Send Payment Request
+                </button>
+            </div>
+        </form>
+    `;
 
-            // Format phone number input
-            document.getElementById('phone-number').addEventListener('input', function(e) {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            });
+    // Allow only numbers in phone input
+    $("#phone-number").on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // Handle form submission with jQuery AJAX
+    $("#mobile-money-form").submit(function (event) {
+        event.preventDefault();
+
+        const phoneNumber = $("#phone-number").val().trim();
+        const csrfToken = $("#csrf-token").val(); // Hidden input in main HTML
+        const providerVal = $("input[name='provider']").val();
+
+        if (phoneNumber.length < 9) {
+            alert('Please enter a valid phone number');
+            return;
         }
+
+        $.ajax({
+            type: "POST",
+            url: `/pay/mobile/${product.id}/`,
+            data: {
+                'phone-number': phoneNumber,
+                'provider': providerVal,
+                'csrfmiddlewaretoken': csrfToken
+            },
+            success: function(data) {
+                if (data.status === "success") {
+                    // Show the payment processing modal view
+                    processMobileMoneyPayment(product, providerVal, phoneNumber, data.tx_ref,);
+                } else {
+                    alert(`Payment failed: ${data.message || 'Please try again.'}`);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr, status, error);
+                alert(`Unexpected error: ${error}`);
+            }
+        });
+    });
+}
+
+
 
         // Process regular payment
         function processPayment(product, paymentMethod) {
@@ -858,7 +892,7 @@ function proceedWithPayment(product) {
         }
 
         // Process mobile money payment
-        function processMobileMoneyPayment(product, provider, phoneNumber) {
+        function processMobileMoneyPayment(product, provider, phoneNumber,tx_ref) {
             const title = document.getElementById('modal-title');
             const content = document.getElementById('modal-content');
 
@@ -891,14 +925,54 @@ function proceedWithPayment(product) {
                             <div class="w-2 h-2 bg-yellow-600 rounded-full"></div>
                         </div>
                     </div>
+
+                    <button 
+                        id="payment-success-btn"
+                        data-tx-ref="${tx_ref}" 
+                        style="display: none; padding:10px;"
+                        type="button" 
+                        class="flex-1 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors">
+                        Verify Payment
+                    </button>
                 </div>
             `;
 
             // Simulate mobile money confirmation
             setTimeout(() => {
-                showPaymentSuccess(product, provider, phoneNumber);
+                 const successButton = document.getElementById('payment-success-btn');
+                 if (successButton) {
+                 successButton.style.display = 'inline-block'; // Show the button
+             }
+                //showPaymentSuccess(product, provider, phoneNumber);
             }, 5000);
+
+
+           $(document).on("click", "#payment-success-btn", function() {
+    const txRef = $(this).data("tx-ref");
+    console.log("Verifying:", txRef);
+
+    $.ajax({
+        url: `/pay/verify/${txRef}/`,
+        type: "POST",
+        data: { 'type': 'mobile' },
+        success: function(response) {
+            console.log("Response:", response);
+            if (response.status === "success") {
+                showPaymentSuccess(product, provider, phoneNumber);
+                //alert("✅ " + response.message);
+            } else {
+                alert("❌ " + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+            alert("⚠️ Something went wrong. Try again.");
         }
+    });
+});
+        }
+
+
 
         // Show payment success
         function showPaymentSuccess(product, paymentMethod, phoneNumber = null) {

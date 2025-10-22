@@ -17,4 +17,10 @@ urlpatterns = [
 
     path('admin-dashboard/',views.admin_dashboard,name="admin_dashboard"),
 
+
+    path("pay/mobile/<int:product_id>/", views.mobile_money_payment, name="mobile_money_payment"),
+    path("pay/card/<int:product_id>/", views.card_payment, name="card_payment"),
+    path("pay/verify/<tx_ref>/", views.verify_payment, name="verify_payment"),
+
+
 ]
